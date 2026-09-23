@@ -1,0 +1,19 @@
+//
+//  CosteReunionTests.swift
+//  CosteReunionTests
+//
+//  Created by Francisco Sánchez on 23/09/2026.
+//
+
+import Testing
+@testable import CosteReunion
+
+struct CosteReunionTests {
+
+    @Test func example() async throws {
+        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+        // Swift Testing Documentation
+        // https://developer.apple.com/documentation/testing
+    }
+
+}
