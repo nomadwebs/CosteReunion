@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //  CosteReunion
 //
-//  Hoja de ajustes de la app. De momento: elegir la moneda.
+//  Hoja de ajustes: moneda, subtítulo, coste por persona y estimación.
 //
 
 import SwiftUI
@@ -12,6 +12,7 @@ import SwiftUI
 /// ajuste nuevo = una propiedad `@Binding` más y una fila en la lista.
 struct SettingsView: View {
     @Binding var currency: Currency
+    @Binding var preferences: Preferences
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -30,6 +31,45 @@ struct SettingsView: View {
                     Text("Moneda")
                 } footer: {
                     Text("Se usa para mostrar todos los importes de la app.")
+                }
+
+                // MARK: Subtítulo
+                Section {
+                    Toggle("Mostrar tasa de coste", isOn: $preferences.showRateInSubtitle)
+                    // El selector de unidad solo tiene sentido si la tasa se muestra.
+                    if preferences.showRateInSubtitle {
+                        Picker("Unidad", selection: $preferences.rateUnit) {
+                            ForEach(RateUnit.allCases) { unit in
+                                Text(unit.displayName).tag(unit)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Subtítulo")
+                } footer: {
+                    Text("Muestra el ritmo de gasto bajo el contador (por minuto o por hora).")
+                }
+
+                // MARK: Coste por persona
+                Section {
+                    Toggle("Coste en vivo por persona", isOn: $preferences.showLivePerPerson)
+                } footer: {
+                    Text("Añade bajo el contador cuánto lleva gastado cada asistente, en tiempo real.")
+                }
+
+                // MARK: Estimación por duración
+                Section {
+                    Toggle("Estimar por duración", isOn: $preferences.estimateEnabled)
+                    if preferences.estimateEnabled {
+                        Stepper("Duración: \(preferences.estimatedMinutes) min",
+                                value: $preferences.estimatedMinutes,
+                                in: 5...480,
+                                step: 5)
+                    }
+                } header: {
+                    Text("Duración estimada")
+                } footer: {
+                    Text("Muestra cuánto costaría la reunión a este ritmo y avisa al superar la duración.")
                 }
             }
             .navigationTitle("Ajustes")

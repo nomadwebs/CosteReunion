@@ -7,9 +7,14 @@
 
 import SwiftUI
 
+/// Hoja de solo lectura con el desglose por persona.
+/// Recibe DATOS ya calculados (`let`, no un binding ni el modelo): es una "foto"
+/// del resultado en el momento de abrirla. Al no mutar nada, es la subvista más
+/// simple y la más fácil de testear.
 struct BreakdownView: View {
     let entries: [LedgerEntry]
     let totalTime: TimeInterval
+    let currencyCode: String   // código ISO de la moneda elegida en Ajustes
     @Environment(\.dismiss) private var dismiss
 
     private var total: Double { entries.reduce(0) { $0 + $1.cost } }
@@ -20,14 +25,14 @@ struct BreakdownView: View {
 
     /// Texto para compartir el resultado (WhatsApp, Slack, LinkedIn…).
     private var shareText: String {
-        "Esta reunión ha costado \(total.formatted(.currency(code: "EUR"))) en \(timeText) con \(entries.count) personas."
+        "Esta reunión ha costado \(total.formatted(.currency(code: currencyCode))) en \(timeText) con \(entries.count) personas."
     }
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    LabeledContent("Total", value: total, format: .currency(code: "EUR"))
+                    LabeledContent("Total", value: total, format: .currency(code: currencyCode))
                         .font(.title3.bold())
                     LabeledContent("Duración", value: timeText)
                 }
@@ -45,7 +50,7 @@ struct BreakdownView: View {
                                 }
                             }
                             Spacer()
-                            Text(entry.cost, format: .currency(code: "EUR"))
+                            Text(entry.cost, format: .currency(code: currencyCode))
                                 .monospacedDigit()
                         }
                     }
